@@ -4,8 +4,7 @@
 FROM alpine/git:latest AS builder
 WORKDIR /src
 
-# Nur die benötigten Module aus dem Repo (Branch 17.0) klonen
-RUN git clone --depth 1 --branch 17.0 https://github.com/OCA/edi.git edi \
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/edi.git edi \
  && mv edi/account_einvoice_generate    ./account_einvoice_generate \
  && mv edi/base_facturx                  ./base_facturx \
  && mv edi/account_invoice_facturx       ./account_invoice_facturx \
