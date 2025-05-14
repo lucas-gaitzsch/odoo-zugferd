@@ -1,16 +1,33 @@
+# -----------------------
+# 1) Builder-Stage: Klonen der OCA-EDI-Module
+# -----------------------
+FROM alpine/git:latest AS builder
+WORKDIR /src
+
+# Nur die benötigten Module aus dem Repo klonen
+RUN git clone --depth 1 --branch 17.0 https://github.com/OCA/edi.git edi \
+ && mv edi/account_einvoice_generate ./account_einvoice_generate \
+ && mv edi/base_factur_x         ./base_factur_x         \
+ && mv edi/account_invoice_facturx ./account_invoice_facturx \
+ && rm -rf edi
+
+# -----------------------
+# 2) Final-Stage: Basierend auf Bitnami Odoo, ohne git
+# -----------------------
 FROM docker.io/bitnami/odoo:18
+
 USER root
 
+# a) Python-Libs für Factur-X
 RUN pip3 install --no-cache-dir factur-x PyPDF2
 
-RUN git clone --depth 1 https://github.com/OCA/edi.git /tmp/edi \
- && cp -a /tmp/edi/account_einvoice_generate /opt/bitnami/odoo/addons/ \
- && cp -a /tmp/edi/base_factur_x         /opt/bitnami/odoo/addons/ \
- && cp -a /tmp/edi/account_invoice_facturx /opt/bitnami/odoo/addons/ \
- && rm -rf /tmp/edi
+# b) Kopieren der geklonten Module aus dem Builder
+COPY --from=builder /src/account_einvoice_generate    /opt/bitnami/odoo/addons/account_einvoice_generate
+COPY --from=builder /src/base_factur_x                /opt/bitnami/odoo/addons/base_factur_x
+COPY --from=builder /src/account_invoice_facturx      /opt/bitnami/odoo/addons/account_invoice_facturx
 
-# 3) Dateirechte anpassen (optional, wenn du auf Probleme stößt)
-# RUN chown -R 1001:0 /opt/bitnami/odoo/addons/account_* \
-#  && chmod -R g+rwX /opt/bitnami/odoo/addons/account_*
+# c) Rechte setzen, damit der Odoo-User darauf zugreifen kann
+RUN chown -R 1001:0 /opt/bitnami/odoo/addons/account_* \
+ && chmod -R g+rwX     /opt/bitnami/odoo/addons/account_*
 
 USER 1001
