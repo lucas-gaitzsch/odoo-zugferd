@@ -27,7 +27,7 @@ COPY --from=builder /src/base_facturx                  /opt/bitnami/odoo/addons/
 COPY --from=builder /src/account_invoice_facturx       /opt/bitnami/odoo/addons/account_invoice_facturx
 
 # c) Rechte setzen, damit der unprivilegierte Odoo-User (1001) darauf zugreifen kann
-RUN chown -R 1001:0 /opt/bitnami/odoo/addons/account_* \
- && chmod -R g+rwX     /opt/bitnami/odoo/addons/account_*
+RUN chown -R 1001:0 /opt/bitnami/odoo/addons \
+ && chmod -R g+rwX     /opt/bitnami/odoo/addons
 
 USER 1001
