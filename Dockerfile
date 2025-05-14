@@ -4,11 +4,15 @@
 FROM alpine/git:latest AS builder
 WORKDIR /src
 
-RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/edi.git edi \
+RUN git clone --depth 1 --branch 17.0 https://github.com/OCA/edi.git edi \
  && mv edi/account_einvoice_generate    ./account_einvoice_generate \
  && mv edi/base_facturx                  ./base_facturx \
  && mv edi/account_invoice_facturx       ./account_invoice_facturx \
  && rm -rf edi
+
+RUN for m in account_einvoice_generate base_facturx account_invoice_facturx; do \
+        sed -i 's/"version": "17\.0\.\([0-9\.]*\)"/"version": "18.0.\1"/' $m/__manifest__.py; \
+    done
 
 # -----------------------
 # 2) Final-Stage: Bitnami Odoo mit eingebetteten Addons
