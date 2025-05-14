@@ -3,6 +3,11 @@ on:
   push:
     paths-ignore:
       - '**/README.md'
+
+permissions:
+  contents: read     # nötig, um Quellcode auszuchecken
+  packages: write  
+  
 jobs:
   publish-container:
     runs-on: ubuntu-latest
