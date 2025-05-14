@@ -4,30 +4,30 @@
 FROM alpine/git:latest AS builder
 WORKDIR /src
 
-# Nur die benötigten Module aus dem Repo klonen
-RUN git clone --depth 1 --branch 17.0 https://github.com/OCA/edi.git edi \
- && mv edi/account_einvoice_generate ./account_einvoice_generate \
- && mv edi/base_factur_x         ./base_factur_x         \
- && mv edi/account_invoice_facturx ./account_invoice_facturx \
- && rm -rf edi
+# Nur die benötigten Module aus dem Repo (Branch 17.0) klonen
+RUN git clone --depth 1 --branch 17.0 https://github.com/OCA/edi.git edi
+RUN mv edi/account_einvoice_generate    ./account_einvoice_generate
+RUN mv edi/base_facturx                  ./base_facturx
+RUN mv edi/account_invoice_facturx       ./account_invoice_facturx
+RUN rm -rf edi
 
 # -----------------------
-# 2) Final-Stage: Basierend auf Bitnami Odoo
+# 2) Final-Stage: Bitnami Odoo
 # -----------------------
 FROM docker.io/bitnami/odoo:18
 
 USER root
 
-# a) Python-Libs für Factur-X
+# a) Python-Libraries für Factur-X
 RUN pip3 install --no-cache-dir factur-x PyPDF2
 
-# b) Kopieren der geklonten Module aus dem Builder
+# b) Vorgeklonte Module in den Addons-Pfad kopieren
 COPY --from=builder /src/account_einvoice_generate    /opt/bitnami/odoo/addons/account_einvoice_generate
-COPY --from=builder /src/base_factur_x                /opt/bitnami/odoo/addons/base_factur_x
-COPY --from=builder /src/account_invoice_facturx      /opt/bitnami/odoo/addons/account_invoice_facturx
+COPY --from=builder /src/base_facturx                  /opt/bitnami/odoo/addons/base_facturx
+COPY --from=builder /src/account_invoice_facturx       /opt/bitnami/odoo/addons/account_invoice_facturx
 
-# c) Rechte setzen, damit der Odoo-User darauf zugreifen kann
-# RUN chown -R 1001:0 /opt/bitnami/odoo/addons/account_* \
-#  && chmod -R g+rwX     /opt/bitnami/odoo/addons/account_*
+# c) Rechte setzen, damit der unprivilegierte Odoo-User (1001) darauf zugreifen kann
+RUN chown -R 1001:0 /opt/bitnami/odoo/addons/account_* \
+ && chmod -R g+rwX     /opt/bitnami/odoo/addons/account_*
 
 USER 1001
