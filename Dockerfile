@@ -12,7 +12,7 @@ RUN git clone --depth 1 --branch 17.0 https://github.com/OCA/edi.git edi \
  && rm -rf edi
 
 # -----------------------
-# 2) Final-Stage: Basierend auf Bitnami Odoo, ohne git
+# 2) Final-Stage: Basierend auf Bitnami Odoo
 # -----------------------
 FROM docker.io/bitnami/odoo:18
 
