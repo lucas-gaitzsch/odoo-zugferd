@@ -23,6 +23,6 @@ RUN mkdir -p /bitnami/odoo/addons/
 COPY --from=builder /src/base_facturx                  /bitnami/odoo/addons/base_facturx
 COPY --from=builder /src/account_einvoice_generate    /bitnami/odoo/addons/account_einvoice_generate
 COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/account_invoice_facturx
-COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/base_unece
-COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/account_tax_unece
+COPY --from=builder /src/base_unece              /bitnami/odoo/addons/base_unece
+COPY --from=builder /src/account_tax_unece       /bitnami/odoo/addons/account_tax_unece
 
