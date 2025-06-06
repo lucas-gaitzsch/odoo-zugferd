@@ -8,13 +8,10 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/edi.git edi \
  && rm -rf edi
 
 RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/community-data-files.git community-data-files \
- && mv community-data-files/account_tax_unece    ./account_tax_unece \
  && mv community-data-files/base_unece                  ./base_unece \
+ && mv community-data-files/account_tax_unece    ./account_tax_unece \
  && rm -rf community-data-files
 
-# RUN for m in account_einvoice_generate base_facturx account_invoice_facturx; do \
-#         sed -i 's/"version": "17\.0\.\([0-9\.]*\)"/"version": "18.0.\1"/' $m/__manifest__.py; \
-#     done
 
 FROM docker.io/bitnami/odoo:18
 
@@ -23,7 +20,9 @@ RUN pip3 install --no-cache-dir factur-x PyPDF2
 
 RUN mkdir -p /bitnami/odoo/addons/
 
-COPY --from=builder /src/account_einvoice_generate    /bitnami/odoo/addons/account_einvoice_generate
 COPY --from=builder /src/base_facturx                  /bitnami/odoo/addons/base_facturx
+COPY --from=builder /src/account_einvoice_generate    /bitnami/odoo/addons/account_einvoice_generate
 COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/account_invoice_facturx
+COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/base_unece
+COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/account_tax_unece
 
