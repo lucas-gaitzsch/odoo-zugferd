@@ -19,6 +19,10 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/bank-payment.git ba
  && mv bank-payment/account_payment_partner    ./account_payment_partner \
  && rm -rf bank-payment
 
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/account-payment.git account-payment \
+ && mv account-payment/account_payment_method_base       ./account_payment_method_base \
+ && rm -rf account-payment
+
 
 FROM docker.io/bitnami/odoo:18
 
@@ -39,3 +43,4 @@ COPY --from=builder /src/uom_unece       /bitnami/odoo/addons/uom_unece
 COPY --from=builder /src/account_payment_mode       /bitnami/odoo/addons/account_payment_mode
 COPY --from=builder /src/account_payment_partner       /bitnami/odoo/addons/account_payment_partner
 
+COPY --from=builder /src/account_payment_method_base       /bitnami/odoo/addons/account_payment_method_base
