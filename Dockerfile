@@ -7,6 +7,11 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/edi.git edi \
  && mv edi/account_invoice_facturx       ./account_invoice_facturx \
  && rm -rf edi
 
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/community-data-files.git community-data-files \
+ && mv community-data-files/account_tax_unece    ./account_tax_unece \
+ && mv community-data-files/base_unece                  ./base_unece \
+ && rm -rf community-data-files
+
 # RUN for m in account_einvoice_generate base_facturx account_invoice_facturx; do \
 #         sed -i 's/"version": "17\.0\.\([0-9\.]*\)"/"version": "18.0.\1"/' $m/__manifest__.py; \
 #     done
