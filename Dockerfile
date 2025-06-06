@@ -27,7 +27,7 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/account-payment.git
 FROM docker.io/bitnami/odoo:18
 
 # a) Python-Libs für Factur-X
-RUN /opt/bitnami/python/bin/pip3 install --no-cache-dir factur-x PyPDF2
+RUN /opt/bitnami/odoo/venv/bin/pip install --no-cache-dir factur-x PyPDF2
 
 RUN mkdir -p /bitnami/odoo/addons/
 
