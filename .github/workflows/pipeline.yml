@@ -3,6 +3,7 @@ on:
   push:
     paths-ignore:
       - '**/README.md'
+  workflow_dispatch: {}
 
 permissions:
   contents: read     # nötig, um Quellcode auszuchecken
