@@ -26,17 +26,27 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/account-payment.git
 
 FROM odoo:18
 
-# Switch to root to install packages and copy files
 USER root
 
-# a) Python-libs für Factur-X (sicher mit python3 -m pip)
-RUN python3 -m pip install --no-cache-dir factur-x PyPDF2
+# Installiere venv + minimal build-essentials (falls native libs kompiliert werden müssen)
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends \
+    python3-venv python3-pip build-essential libxml2-dev libxslt1-dev libjpeg-dev zlib1g-dev \
+ && rm -rf /var/lib/apt/lists/*
 
-# Stelle sicher, dass der Ordner für Third-party Addons existiert und der odoo-User Zugriff hat
+# Erstelle eine virtualenv für zusätzliche Python-Pakete und installiere dort die Pakete
+RUN python3 -m venv /opt/odoo/venv \
+ && /opt/odoo/venv/bin/pip install --upgrade pip setuptools wheel \
+ && /opt/odoo/venv/bin/pip install --no-cache-dir factur-x PyPDF2
+
+# Damit Odoo beim Start die venv-Python-Version verwendet, venv bin in PATH voranstellen
+ENV PATH="/opt/odoo/venv/bin:${PATH}"
+
+# Addons-Verzeichnis (offizielles Image nutzt /mnt/extra-addons für Drittanbieter-Addons)
 RUN mkdir -p /mnt/extra-addons \
  && chown -R odoo:odoo /mnt/extra-addons
 
-# Kopiere die vom builder erzeugten Addons in das offizielle Addons-Mount
 COPY --from=builder /src/base_facturx                  /mnt/extra-addons/base_facturx
 COPY --from=builder /src/account_einvoice_generate    /mnt/extra-addons/account_einvoice_generate
 COPY --from=builder /src/account_invoice_facturx       /mnt/extra-addons/account_invoice_facturx
@@ -48,13 +58,8 @@ COPY --from=builder /src/uom_unece       /mnt/extra-addons/uom_unece
 
 COPY --from=builder /src/account_payment_mode       /mnt/extra-addons/account_payment_mode
 COPY --from=builder /src/account_payment_partner       /mnt/extra-addons/account_payment_partner
-
 COPY --from=builder /src/account_payment_method_base       /mnt/extra-addons/account_payment_method_base
 
-# Setze Besitzerrechte nochmal sicherheitshalber
 RUN chown -R odoo:odoo /mnt/extra-addons
 
-# Zurück zum odoo User (entrypoint vom offiziellen Image erwartet/wirkt mit odoo)
 USER odoo
-
-# (ENTRYPOINT / CMD bleiben vom offiziellen Image unverändert)
