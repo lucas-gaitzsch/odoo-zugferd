@@ -24,23 +24,37 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/account-payment.git
  && rm -rf account-payment
 
 
-FROM docker.io/bitnami/odoo:18
+FROM odoo:18
 
-# a) Python-Libs für Factur-X
-RUN /opt/bitnami/odoo/venv/bin/pip install --no-cache-dir factur-x PyPDF2
+# Switch to root to install packages and copy files
+USER root
 
-RUN mkdir -p /bitnami/odoo/addons/
+# a) Python-libs für Factur-X (sicher mit python3 -m pip)
+RUN python3 -m pip install --no-cache-dir factur-x PyPDF2
 
-COPY --from=builder /src/base_facturx                  /bitnami/odoo/addons/base_facturx
-COPY --from=builder /src/account_einvoice_generate    /bitnami/odoo/addons/account_einvoice_generate
-COPY --from=builder /src/account_invoice_facturx       /bitnami/odoo/addons/account_invoice_facturx
+# Stelle sicher, dass der Ordner für Third-party Addons existiert und der odoo-User Zugriff hat
+RUN mkdir -p /mnt/extra-addons \
+ && chown -R odoo:odoo /mnt/extra-addons
 
-COPY --from=builder /src/base_unece              /bitnami/odoo/addons/base_unece
-COPY --from=builder /src/account_tax_unece       /bitnami/odoo/addons/account_tax_unece
-COPY --from=builder /src/account_payment_unece       /bitnami/odoo/addons/account_payment_unece
-COPY --from=builder /src/uom_unece       /bitnami/odoo/addons/uom_unece
+# Kopiere die vom builder erzeugten Addons in das offizielle Addons-Mount
+COPY --from=builder /src/base_facturx                  /mnt/extra-addons/base_facturx
+COPY --from=builder /src/account_einvoice_generate    /mnt/extra-addons/account_einvoice_generate
+COPY --from=builder /src/account_invoice_facturx       /mnt/extra-addons/account_invoice_facturx
 
-COPY --from=builder /src/account_payment_mode       /bitnami/odoo/addons/account_payment_mode
-COPY --from=builder /src/account_payment_partner       /bitnami/odoo/addons/account_payment_partner
+COPY --from=builder /src/base_unece              /mnt/extra-addons/base_unece
+COPY --from=builder /src/account_tax_unece       /mnt/extra-addons/account_tax_unece
+COPY --from=builder /src/account_payment_unece       /mnt/extra-addons/account_payment_unece
+COPY --from=builder /src/uom_unece       /mnt/extra-addons/uom_unece
 
-COPY --from=builder /src/account_payment_method_base       /bitnami/odoo/addons/account_payment_method_base
+COPY --from=builder /src/account_payment_mode       /mnt/extra-addons/account_payment_mode
+COPY --from=builder /src/account_payment_partner       /mnt/extra-addons/account_payment_partner
+
+COPY --from=builder /src/account_payment_method_base       /mnt/extra-addons/account_payment_method_base
+
+# Setze Besitzerrechte nochmal sicherheitshalber
+RUN chown -R odoo:odoo /mnt/extra-addons
+
+# Zurück zum odoo User (entrypoint vom offiziellen Image erwartet/wirkt mit odoo)
+USER odoo
+
+# (ENTRYPOINT / CMD bleiben vom offiziellen Image unverändert)
