@@ -29,7 +29,7 @@ FROM odoo:18.0
 USER root
 
 # a) Python-Libs für Factur-X (Bitnami-venv entfällt)
-RUN pip3 install --no-cache-dir factur-x PyPDF2
+RUN pip3 install --no-cache-dir --break-system-packages factur-x PyPDF2
 
 # b) Zielpfad für Custom Addons im offiziellen Image
 RUN mkdir -p /mnt/extra-addons \
