@@ -28,6 +28,17 @@ FROM odoo:18.0
 
 USER root
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    fontconfig \
+    xfonts-75dpi \
+    xfonts-base \
+    fonts-liberation \
+    fonts-urw-base35 \
+    libxrender1 \
+    libxext6 \
+    libfreetype6 \
+    && rm -rf /var/lib/apt/lists/*
+
 # a) Python-Libs für Factur-X (Bitnami-venv entfällt)
 RUN pip3 install --no-cache-dir --break-system-packages factur-x PyPDF2
 
