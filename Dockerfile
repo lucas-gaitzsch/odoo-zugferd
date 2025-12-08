@@ -35,7 +35,6 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     fonts-liberation \
     fonts-urw-base35 \
     fonts-dejavu-core \
-    gsfonds \
     libxrender1 \
     libxext6 \
     libfreetype6 \
