@@ -24,7 +24,7 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/account-payment.git
  && rm -rf account-payment
 
 
-FROM odoo:18.0
+FROM odoo:19.0
 
 USER root
 
