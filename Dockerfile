@@ -60,8 +60,12 @@ COPY --from=builder /src/account_payment_mode       /mnt/extra-addons/account_pa
 COPY --from=builder /src/account_payment_partner    /mnt/extra-addons/account_payment_partner
 
 COPY --from=builder /src/account_payment_method_base /mnt/extra-addons/account_payment_method_base
+COPY odoo-startup.sh /usr/local/bin/odoo-startup.sh
 
 # Sicherheitshalber Ownership für alle kopierten Addons
 RUN chown -R odoo:odoo /mnt/extra-addons
+RUN chmod +x /usr/local/bin/odoo-startup.sh
 
 USER odoo
+
+ENTRYPOINT ["/usr/local/bin/odoo-startup.sh"]
