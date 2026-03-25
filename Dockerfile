@@ -40,8 +40,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libfreetype6 \
     && rm -rf /var/lib/apt/lists/*
 
-# a) Python-Libs für Factur-X (Bitnami-venv entfällt)
-RUN pip3 install --no-cache-dir --break-system-packages factur-x PyPDF2
+# a) Python-Libs für Factur-X / OCA migrations
+RUN pip3 install --no-cache-dir --break-system-packages factur-x PyPDF2 openupgradelib
 
 # b) Zielpfad für Custom Addons im offiziellen Image
 RUN mkdir -p /mnt/extra-addons \
