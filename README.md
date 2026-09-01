@@ -14,6 +14,7 @@ Odoo 18 image for Factur-X/ZUGFeRD using OCA addons.
 - `account_payment_mode`
 - `account_payment_partner`
 - `account_payment_method_base`
+- `partner_bank_acc_holder_name`
 
 ## Startup migration
 
@@ -27,7 +28,7 @@ Set:
 If `ODOO_AUTO_UPGRADE_MODULES` is not set, the image upgrades this default list:
 
 ```text
-account_payment_method_base,account_payment_mode,account_payment_partner,base_unece,account_payment_unece,account_tax_unece,uom_unece,base_facturx,account_einvoice_generate,account_invoice_facturx
+account_payment_method_base,account_payment_mode,account_payment_partner,partner_bank_acc_holder_name,base_unece,account_payment_unece,account_tax_unece,uom_unece,base_facturx,account_einvoice_generate,account_invoice_facturx
 ```
 
 Example:

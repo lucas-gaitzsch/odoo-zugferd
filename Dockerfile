@@ -23,6 +23,10 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/account-payment.git
  && mv account-payment/account_payment_method_base  ./account_payment_method_base \
  && rm -rf account-payment
 
+RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/partner-contact.git partner-contact \
+ && mv partner-contact/partner_bank_acc_holder_name ./partner_bank_acc_holder_name \
+ && rm -rf partner-contact
+
 
 FROM odoo:18.0
 
@@ -60,6 +64,7 @@ COPY --from=builder /src/account_payment_mode       /mnt/extra-addons/account_pa
 COPY --from=builder /src/account_payment_partner    /mnt/extra-addons/account_payment_partner
 
 COPY --from=builder /src/account_payment_method_base /mnt/extra-addons/account_payment_method_base
+COPY --from=builder /src/partner_bank_acc_holder_name /mnt/extra-addons/partner_bank_acc_holder_name
 COPY odoo-startup.sh /usr/local/bin/odoo-startup.sh
 
 # Sicherheitshalber Ownership für alle kopierten Addons

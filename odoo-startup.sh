@@ -1,7 +1,7 @@
 #!/bin/bash
 set -euo pipefail
 
-DEFAULT_MODULES="account_payment_method_base,account_payment_mode,account_payment_partner,base_unece,account_payment_unece,account_tax_unece,uom_unece,base_facturx,account_einvoice_generate,account_invoice_facturx"
+DEFAULT_MODULES="account_payment_method_base,account_payment_mode,account_payment_partner,partner_bank_acc_holder_name,base_unece,account_payment_unece,account_tax_unece,uom_unece,base_facturx,account_einvoice_generate,account_invoice_facturx"
 
 cmd=("$@")
 
