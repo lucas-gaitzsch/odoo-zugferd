@@ -28,7 +28,7 @@ RUN git clone --depth 1 --branch 18.0 https://github.com/OCA/partner-contact.git
  && rm -rf partner-contact
 
 
-FROM odoo:18.0
+FROM odoo:20.0
 
 USER root
 
